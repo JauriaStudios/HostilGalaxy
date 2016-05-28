@@ -14,7 +14,9 @@ from panda3d.core import Point3, TransparencyAttrib,TextNode
 from direct.actor.Actor import Actor
 
 class Ship:
-    def __init__(self):
+    def __init__(self, game):
+
+        self.game = game
 
         self.model = Actor("data/ship.egg")
         self.model.setPos(0, 0, 0)

@@ -34,14 +34,6 @@ from panda3d.core import PStatClient
 
 from panda3d.ai import *
 
-from panda3d.bullet import BulletWorld
-from panda3d.bullet import BulletDebugNode
-from panda3d.bullet import BulletPlaneShape
-from panda3d.bullet import BulletBoxShape
-from panda3d.bullet import BulletSphereShape
-from panda3d.bullet import BulletRigidBodyNode
-from panda3d.bullet import BulletSliderConstraint
-
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -56,9 +48,9 @@ class World(ShowBase):
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
 
-        self.bg = Background()
+        self.bg = Background(self)
         self.rock = Rock(5)
-        self.ship = Ship()
+        self.ship = Ship(self)
 
         self.setup()
 
@@ -138,12 +130,11 @@ class World(ShowBase):
 
         self.rock.model.setZ(self.rock.model.getZ() - dt*2)
 
-        print(self.rock.model.getZ())
 
-        size = self.bg.get_size()
-        self.bg.model.setPos(0, 5, (size[2]/2)-task.time*10)
+
+        self.bg.model.setTexOffset(self.bg.ts, 0, task.time)
+
         return task.cont
-
 
 
 def main():
@@ -152,7 +143,7 @@ def main():
     props.setTitle('Hostil Galaxy')
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
     props.setFullscreen(0)
-    props.setSize(1024, 768)
+    props.setSize(800, 600)
 
     game = World()
 
