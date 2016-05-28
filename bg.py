@@ -16,13 +16,12 @@ class Background:
         self.model = loader.loadModel(os.path.join("data", "bg.egg"))
 
         self.model.setHpr(0, 0, 0)
-        self.model.setPos(0, 0, 0)
+        self.model.setPos(0, 65, 0)
         self.model.setScale(1)
 
     def draw(self):
         self.model.reparentTo(self.game.camera)
         self.ts = TextureStage('ts')
-        #self.model.setTexture(self.texture, 0)
         self.model.setTexture(self.ts, self.texture)
 
     def update(self, task):

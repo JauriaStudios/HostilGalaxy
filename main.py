@@ -113,7 +113,7 @@ class World(ShowBase):
         lens = OrthographicLens()
         lens.setFilmSize(20, 15)  # Or whatever is appropriate for your scene
 
-        self.cam.node().setLens(lens)
+        #self.cam.node().setLens(lens)
         self.cam.setPos(0, -20, 0)
         self.cam.lookAt(0, 0, 0)
 
