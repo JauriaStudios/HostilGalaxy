@@ -132,7 +132,7 @@ def main():
     props.setTitle('Hostil Galaxy')
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
     props.setFullscreen(False)
-    props.setSize(1280, 1024)
+    props.setSize(800, 600)
 
     game = World()
 
