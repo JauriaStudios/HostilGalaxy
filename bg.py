@@ -5,21 +5,28 @@
 # Background
 import os
 
+from panda3d.core import TextureStage
 
 class Background:
-    def __init__(self):
+    def __init__(self, game):
 
-        self.model = loader.loadModel(os.path.join("data", "bg"))
-        size = self.get_size()
+        self.game = game
+
+        self.texture = loader.loadTexture(os.path.join("data", "bg.png"))
+        self.model = loader.loadModel(os.path.join("data", "bg.egg"))
 
         self.model.setHpr(0, 0, 0)
-        self.model.setPos(0, 5, size[2]/2)
+        self.model.setPos(0, 65, 0)
         self.model.setScale(1)
 
     def draw(self):
-        self.model.reparentTo(render)
+        self.model.reparentTo(self.game.camera)
+        self.ts = TextureStage('ts')
+        self.model.setTexture(self.ts, self.texture)
 
-    def get_size(self):
-        min, max = self.model.getTightBounds()
-        size = max - min
-        return size
+    def update(self, task):
+        dt = globalClock.getDt()
+
+        self.model.setTexOffset(self.ts, 0, task.time * 0.5)
+
+        return task.cont

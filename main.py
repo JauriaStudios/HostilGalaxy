@@ -34,14 +34,6 @@ from panda3d.core import PStatClient
 
 from panda3d.ai import *
 
-from panda3d.bullet import BulletWorld
-from panda3d.bullet import BulletDebugNode
-from panda3d.bullet import BulletPlaneShape
-from panda3d.bullet import BulletBoxShape
-from panda3d.bullet import BulletSphereShape
-from panda3d.bullet import BulletRigidBodyNode
-from panda3d.bullet import BulletSliderConstraint
-
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -56,9 +48,9 @@ class World(ShowBase):
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
 
-        self.bg = Background()
+        self.bg = Background(self)
         self.rock = Rock(5)
-        self.ship = Ship()
+        self.ship = Ship(self)
 
         self.setup()
 
@@ -81,8 +73,10 @@ class World(ShowBase):
         self.init_lights()
         self.init_camera()
 
-        # Task
-        self.taskMgr.add(self.update, 'updateWorld')
+        # Tasks
+        self.taskMgr.add(self.update, 'update')
+        self.taskMgr.add(self.bg.update, 'updateBackground')
+        self.taskMgr.add(self.ship.update, 'updateShip')
 
     def init_world(self):
         print("init world")
@@ -119,7 +113,7 @@ class World(ShowBase):
         lens = OrthographicLens()
         lens.setFilmSize(20, 15)  # Or whatever is appropriate for your scene
 
-        self.cam.node().setLens(lens)
+        #self.cam.node().setLens(lens)
         self.cam.setPos(0, -20, 0)
         self.cam.lookAt(0, 0, 0)
 
@@ -127,23 +121,9 @@ class World(ShowBase):
     def update(self, task):
         dt = globalClock.getDt()
 
-        if self.mouseWatcherNode.hasMouse():
-            mpos = self.mouseWatcherNode.getMouse()
-
-            x = mpos.getX()
-            y = mpos.getY()
-
-            self.ship.model.setPos(x*10,0,y*10)
-
-
         self.rock.model.setZ(self.rock.model.getZ() - dt*2)
 
-        print(self.rock.model.getZ())
-
-        size = self.bg.get_size()
-        self.bg.model.setPos(0, 5, (size[2]/2)-task.time*10)
         return task.cont
-
 
 
 def main():
@@ -151,8 +131,8 @@ def main():
 
     props.setTitle('Hostil Galaxy')
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
-    props.setFullscreen(0)
-    props.setSize(1024, 768)
+    props.setFullscreen(False)
+    props.setSize(800, 600)
 
     game = World()
 
