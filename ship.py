@@ -11,9 +11,6 @@ class Ship:
 
         self.game = game
 
-        self.x_pid = PID(3.0, 0.5, 1.0)
-        self.z_pid = PID(3.0, 0.5, 1.0)
-
         self.model = Actor("data/ship.egg")
         self.model.setPos(0, 50, 0)
         self.model.setHpr(0, 0, 0)
