@@ -25,3 +25,9 @@ class Background:
         #self.model.setTexture(self.texture, 0)
         self.model.setTexture(self.ts, self.texture)
 
+    def update(self, task):
+        dt = globalClock.getDt()
+
+        self.model.setTexOffset(self.ts, 0, task.time * 0.5)
+
+        return task.cont

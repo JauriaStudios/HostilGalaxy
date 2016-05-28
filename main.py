@@ -73,8 +73,10 @@ class World(ShowBase):
         self.init_lights()
         self.init_camera()
 
-        # Task
-        self.taskMgr.add(self.update, 'updateWorld')
+        # Tasks
+        self.taskMgr.add(self.update, 'update')
+        self.taskMgr.add(self.bg.update, 'updateBackground')
+        self.taskMgr.add(self.ship.update, 'updateShip')
 
     def init_world(self):
         print("init world")
@@ -119,20 +121,7 @@ class World(ShowBase):
     def update(self, task):
         dt = globalClock.getDt()
 
-        if self.mouseWatcherNode.hasMouse():
-            mpos = self.mouseWatcherNode.getMouse()
-
-            x = mpos.getX()
-            y = mpos.getY()
-
-            self.ship.model.setPos(x*10,0,y*10)
-
-
         self.rock.model.setZ(self.rock.model.getZ() - dt*2)
-
-
-
-        self.bg.model.setTexOffset(self.bg.ts, 0, task.time)
 
         return task.cont
 
@@ -142,8 +131,8 @@ def main():
 
     props.setTitle('Hostil Galaxy')
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
-    props.setFullscreen(0)
-    props.setSize(800, 600)
+    props.setFullscreen(False)
+    props.setSize(1280, 1024)
 
     game = World()
 
