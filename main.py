@@ -34,6 +34,8 @@ from panda3d.core import PStatClient
 
 from panda3d.ai import *
 
+from gui import StartMenu
+
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -52,7 +54,7 @@ class World(ShowBase):
         self.rock = Rock(5)
         self.ship = Ship(self)
 
-        self.setup()
+        self.start_menu = StartMenu(self)
 
     def do_exit(self):
         self.cleanup()

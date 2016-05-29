@@ -9,7 +9,9 @@ from bullet import Bullet
 
 from direct.actor.Actor import Actor
 
+
 class Ship:
+
     def __init__(self, game):
 
         self.game = game
