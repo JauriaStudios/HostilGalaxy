@@ -19,13 +19,26 @@ class Ship:
 
         self.model = Actor("data/ship.egg")
 
-        self.model.setPos(0, 30, 0)
+        self.model.setPos(0, 0, 0)
         self.model.setHpr(0, 0, 0)
+
+        self.normal_speed = 3.5
+        self.low_speed = 2
+
+        self.speed = self.normal_speed
 
         self.cool_down = 0.1
         self.last_shoot = 0
 
         self.keyMap = {
+
+            "up": 0,
+            "down": 0,
+            "left": 0,
+            "right": 0,
+
+            "brake": 0,
+
             "attack": 0,
         }
 
@@ -38,6 +51,24 @@ class Ship:
         self.game.accept("shift-mouse1", self.setKey, ["attack", 1])
         self.game.accept("shift-mouse1-up", self.setKey, ["attack", 0])
 
+        self.game.accept("x", self.setKey, ["attack", 1])
+        self.game.accept("x-up", self.setKey, ["attack", 0])
+
+        self.game.accept("c", self.setKey, ["brake", 1])
+        self.game.accept("c-up", self.setKey, ["brake", 0])
+
+        self.game.accept("arrow_up", self.setKey, ["up", 1])
+        self.game.accept("arrow_up-up", self.setKey, ["up", 0])
+
+        self.game.accept("arrow_down", self.setKey, ["down", 1])
+        self.game.accept("arrow_down-up", self.setKey, ["down", 0])
+
+        self.game.accept("arrow_left", self.setKey, ["left", 1])
+        self.game.accept("arrow_left-up", self.setKey, ["left", 0])
+
+        self.game.accept("arrow_right", self.setKey, ["right", 1])
+        self.game.accept("arrow_right-up", self.setKey, ["right", 0])
+
     def setKey(self, key, value):
         self.keyMap[key] = value
 
@@ -48,11 +79,32 @@ class Ship:
         dt = globalClock.getDt()
 
         # Movement
+
+
+        if self.keyMap["brake"]:
+            self.speed = self.low_speed
+        else:
+            self.speed = self.normal_speed
+
+
+        if self.keyMap["up"]:
+            self.model.setZ(self.model, self.speed * dt)
+
+        elif self.keyMap["down"]:
+            self.model.setZ(self.model, -self.speed * dt)
+
+        if self.keyMap["left"]:
+            self.model.setX(self.model, -self.speed * dt)
+
+        elif self.keyMap["right"]:
+            self.model.setX(self.model, self.speed * dt)
+
+        """
         if self.game.mouseWatcherNode.hasMouse():
             mpos = self.game.mouseWatcherNode.getMouse()
 
-            x = mpos.getX() * 20
-            z = mpos.getY() * 20
+            x = mpos.getX() * 50
+            z = mpos.getY() * 50
 
             self.x_pid.setPoint(x)
             self.z_pid.setPoint(z)
@@ -75,8 +127,7 @@ class Ship:
             #self.model.setH(self.vx * dt)
 
             print(self.vx * dt)
-
-
+        """
         # Shoot
 
         if self.keyMap["attack"]:

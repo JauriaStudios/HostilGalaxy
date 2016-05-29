@@ -16,7 +16,7 @@ class Background:
         self.model = loader.loadModel(os.path.join("data", "bg.egg"))
 
         self.model.setHpr(0, 0, 0)
-        self.model.setPos(0, 65, 0)
+        self.model.setPos(0, 0, 0)
         self.model.setScale(1)
 
     def draw(self):

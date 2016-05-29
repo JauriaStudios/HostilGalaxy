@@ -14,13 +14,13 @@ class Bullet:
         self.ship = ship
 
         self.life = 30 * 5
-        self.speed = 100
+        self.speed = 10
 
         # Creates a bullet and adds it to the bullet list
         pos = self.ship.model.getPos()
         self.model = loader.loadModel(os.path.join("data", "bullet.egg"))
         self.model.setPos(pos)
-        self.model.setScale(0.1)
+        self.model.setScale(1)
         # Velocity is in relation to the ship
         vel = (10)
 
