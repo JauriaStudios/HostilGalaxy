@@ -5,6 +5,7 @@
 # Ship
 
 from pid import PID
+from bullet import Bullet
 
 from direct.actor.Actor import Actor
 
@@ -21,6 +22,24 @@ class Ship:
         self.model.setPos(0, 30, 0)
         self.model.setHpr(0, 0, 0)
 
+        self.cool_down = 0.1
+        self.last_shoot = 0
+
+        self.keyMap = {
+            "attack": 0,
+        }
+
+        # This list will stored fired bullets.
+        self.bullets = []
+
+        self.game.accept("mouse1", self.setKey, ["attack", 1])
+        self.game.accept("mouse1-up", self.setKey, ["attack", 0])
+
+        self.game.accept("shift-mouse1", self.setKey, ["attack", 1])
+        self.game.accept("shift-mouse1-up", self.setKey, ["attack", 0])
+
+    def setKey(self, key, value):
+        self.keyMap[key] = value
 
     def draw(self):
         self.model.reparentTo(render)
@@ -28,6 +47,7 @@ class Ship:
     def update(self, task):
         dt = globalClock.getDt()
 
+        # Movement
         if self.game.mouseWatcherNode.hasMouse():
             mpos = self.game.mouseWatcherNode.getMouse()
 
@@ -51,5 +71,20 @@ class Ship:
 
             self.model.setX(self.model, self.vx * dt)
             self.model.setZ(self.model, self.vz * dt)
+
+            #self.model.setH(self.vx * dt)
+
+            print(self.vx * dt)
+
+
+        # Shoot
+
+        if self.keyMap["attack"]:
+            current_shoot_time = task.time
+            if current_shoot_time - self.last_shoot >= self.cool_down:
+
+                self.last_shoot = current_shoot_time
+
+                self.bullet = Bullet(self)
 
         return task.cont
