@@ -59,7 +59,7 @@ class StartMenu(DirectObject.DirectObject):
                 self.maps_credits.find('**/creditsrollover'),
                 self.maps_credits.find('**/creditsdisable')
             ),
-            command=self.hide,
+            #command=self.action,
             scale=0.2,
             borderWidth=(0.01, 0.01),
             frameSize=(-0.55, 0.55, -0.2, 0.2),
@@ -88,9 +88,12 @@ class StartMenu(DirectObject.DirectObject):
         # rolloverSound=self.soundManager.over,
         # clickSound=self.soundManager.click))
 
+        self.start_button.node().setState(2)
+
         self.accept("escape", self.end_game)
         self.accept("arrow_up", self.up)
         self.accept("arrow_down", self.down)
+        self.accept("enter", self.action)
 
     def show(self):
         self.frame.show()
@@ -109,22 +112,40 @@ class StartMenu(DirectObject.DirectObject):
     def up(self):
         if self.active_button == 0:
             self.active_button = 2
-            self.start_button['state'] = DGG.BUTTON_ROLLOVER_STATE
-            self.start_button.setState()
+            self.start_button.node().setState(0)
+            self.quit_button.node().setState(2)
         elif self.active_button == 1:
             self.active_button = 0
+            self.credits_button.node().setState(0)
+            self.start_button.node().setState(2)
         elif self.active_button == 2:
             self.active_button = 1
+            self.quit_button.node().setState(0)
+            self.credits_button.node().setState(2)
 
         print(self.active_button)
 
     def down(self):
         if self.active_button == 0:
             self.active_button = 1
-            self.start_button.setState()
+            self.start_button.node().setState(0)
+            self.credits_button.node().setState(2)
         elif self.active_button == 1:
             self.active_button = 2
+            self.credits_button.node().setState(0)
+            self.quit_button.node().setState(2)
         elif self.active_button == 2:
             self.active_button = 0
+            self.quit_button.node().setState(0)
+            self.start_button.node().setState(2)
 
         print(self.active_button)
+
+    def action(self):
+
+        if self.active_button == 0:
+            self.start_game()
+        elif self.active_button == 1:
+            pass
+        elif self.active_button == 2:
+            self.end_game()
