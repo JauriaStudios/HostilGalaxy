@@ -12,6 +12,7 @@ from direct.showbase import DirectObject
 
 from direct.gui.DirectGui import *
 
+import direct.gui.DirectGuiGlobals as DGG
 
 class StartMenu(DirectObject.DirectObject):
 
