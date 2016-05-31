@@ -56,7 +56,7 @@ class World(ShowBase):
 
         print("- init game")
 
-        self.joypad = Joypad()
+        #self.joypad = Joypad()
 
         self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
 
@@ -102,7 +102,7 @@ class World(ShowBase):
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
         self.taskMgr.add(self.collision.update, 'updateCollision')
-        self.taskMgr.add(self.joypad.update, 'updateJoypad')
+        #self.taskMgr.add(self.joypad.update, 'updateJoypad')
 
     def init_world(self):
 

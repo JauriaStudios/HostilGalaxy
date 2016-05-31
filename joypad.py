@@ -20,12 +20,11 @@ class Joypad:
 
             for i in range(0,len(self.joysticks)):
 
-                print("--- found joystick nº %s" % i)
+                print("--- found joystick nº%s" % i)
 
                 self.joystick = self.joysticks[i]
 
                 self.joystick.push_handlers(self.controller)
-
                 self.joystick.open()
         else:
 
