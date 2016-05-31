@@ -11,8 +11,7 @@ class Joypad:
     def __init__(self):
 
         print("-- init Joystick")
-
-        pyglet.app.platform_event_loop.step(0.003)
+        pyglet.app.platform_event_loop.start()
 
         self.controller = Controller()
 
@@ -43,18 +42,23 @@ class Joypad:
                 self.joystick = self.joysticks[i]
                 self.joystick.close()
 
+    def update(self, task):
+
+        pyglet.app.platform_event_loop.step(0.003)
+
+        return task.cont
+
 
 class Controller:
 
     def on_joybutton_press(self, joystick, button):
-        print("york")
+        print(joystick, button)
 
     def on_joybutton_release(self, joystick, button):
-        print("york")
-
+        print(joystick, button)
 
     def on_joyaxis_motion(self, joystick, axis, value):
-        print("york")
+        print(joystick, axis, value)
 
     def on_joyhat_motion(self, joystick, hat_x, hat_y):
-        print("york")
+        print(joystick, hat_x, hat_y)

@@ -51,10 +51,12 @@ from rock import Rock
 class World(ShowBase):
 
     def __init__(self):
+
         ShowBase.__init__(self)
+
         print("- init game")
 
-        #self.joypad = Joypad()
+        self.joypad = Joypad()
 
         self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
 
@@ -70,11 +72,16 @@ class World(ShowBase):
         self.start_menu = StartMenu(self)
 
     def do_exit(self):
+
+        print("- end game")
+
         self.cleanup()
         sys.exit(0)
 
     def cleanup(self):
+
         print("-- clean up")
+
         self.joypad.clean()
 
     def do_reset(self):
@@ -82,6 +89,7 @@ class World(ShowBase):
         self.setup()
 
     def setup(self):
+
         print("-- start level")
 
         self.init_world()
@@ -94,18 +102,23 @@ class World(ShowBase):
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
         self.taskMgr.add(self.collision.update, 'updateCollision')
+        self.taskMgr.add(self.joypad.update, 'updateJoypad')
 
     def init_world(self):
+
         print("-- init world")
 
         self.bg.draw()
         self.rock.draw()
 
     def init_ship(self):
+
         print("-- init ship")
+
         self.ship.draw()
 
     def init_lights(self):
+
         print("-- init lights")
 
         # Light
@@ -123,6 +136,7 @@ class World(ShowBase):
         render.setLight(dlightNP)
 
     def init_camera(self):
+
         print("-- init camera")
 
         self.disableMouse()
@@ -136,6 +150,7 @@ class World(ShowBase):
 
 
     def update(self, task):
+
         dt = globalClock.getDt()
 
         self.rock.model.setZ(self.rock.model.getZ() - dt*2)
@@ -144,6 +159,7 @@ class World(ShowBase):
 
 
 def main():
+
     props = WindowProperties( )
 
     props.setTitle('Hostil Galaxy')
