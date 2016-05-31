@@ -21,9 +21,9 @@ class Background:
         self.model.setScale(1)
 
     def draw(self):
-        self.model.reparentTo(self.game.camera)
         self.ts = TextureStage('ts')
         self.model.setTexture(self.ts, self.texture)
+        self.model.reparentTo(self.game.camera)
 
     def update(self, task):
         dt = globalClock.getDt()

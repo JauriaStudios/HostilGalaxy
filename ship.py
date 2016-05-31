@@ -9,12 +9,19 @@ from bullet import Bullet
 
 from direct.actor.Actor import Actor
 
+from panda3d.core import PandaNode, NodePath
 
 class Ship:
 
     def __init__(self, game):
 
         self.game = game
+
+        self.shipPoint = NodePath(PandaNode("shipFloaterPoint"))
+        self.shipPoint.reparentTo(render)
+
+        self.x_pos = 0
+        self.z_pos = 0
 
         self.x_pid = PID(3.0, 5.0, 1.0)
         self.z_pid = PID(3.0, 5.0, 1.0)
@@ -83,33 +90,32 @@ class Ship:
         # Movement
 
 
-        if self.keyMap["brake"]:
-            self.speed = self.low_speed
-        else:
-            self.speed = self.normal_speed
+        if self.game.ship_control_type == 0:
+            if self.keyMap["brake"]:
+                self.speed = self.low_speed
+            else:
+                self.speed = self.normal_speed
 
 
-        if self.keyMap["up"]:
-            self.model.setZ(self.model, self.speed * dt)
+            if self.keyMap["up"]:
+                self.model.setZ(self.model, self.speed * dt)
 
-        elif self.keyMap["down"]:
-            self.model.setZ(self.model, -self.speed * dt)
+            elif self.keyMap["down"]:
+                self.model.setZ(self.model, -self.speed * dt)
 
-        if self.keyMap["left"]:
-            self.model.setX(self.model, -self.speed * dt)
+            if self.keyMap["left"]:
+                self.model.setX(self.model, -self.speed * dt)
 
-        elif self.keyMap["right"]:
-            self.model.setX(self.model, self.speed * dt)
+            elif self.keyMap["right"]:
+                self.model.setX(self.model, self.speed * dt)
 
-        """
-        if self.game.mouseWatcherNode.hasMouse():
-            mpos = self.game.mouseWatcherNode.getMouse()
+        elif self.game.ship_control_type == 1:
 
-            x = mpos.getX() * 50
-            z = mpos.getY() * 50
+            self.x_pos = self.shipPoint.getX()
+            self.z_pos = self.shipPoint.getZ()
 
-            self.x_pid.setPoint(x)
-            self.z_pid.setPoint(z)
+            self.x_pid.setPoint(self.x_pos)
+            self.z_pid.setPoint(self.z_pos)
 
             pid_x = self.x_pid.update(self.model.getX())
             pid_z = self.z_pid.update(self.model.getZ())
@@ -126,10 +132,6 @@ class Ship:
             self.model.setX(self.model, self.vx * dt)
             self.model.setZ(self.model, self.vz * dt)
 
-            #self.model.setH(self.vx * dt)
-
-            print(self.vx * dt)
-        """
         # Shoot
 
         if self.keyMap["attack"]:

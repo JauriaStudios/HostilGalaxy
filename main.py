@@ -36,6 +36,7 @@ from panda3d.ai import *
 
 from gui import StartMenu
 
+from collision import Collision
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -47,12 +48,16 @@ class World(ShowBase):
         ShowBase.__init__(self)
         print("init game")
 
+        self.ship_control_type = 0 #0 keyboard, 1 mouse, 2 joystick
+
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
 
         self.bg = Background(self)
-        self.rock = Rock(5)
         self.ship = Ship(self)
+        self.rock = Rock(5)
+
+        self.collision = Collision(self)
 
         self.start_menu = StartMenu(self)
 
@@ -79,6 +84,7 @@ class World(ShowBase):
         self.taskMgr.add(self.update, 'update')
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
+        self.taskMgr.add(self.collision.update, 'updateCollision')
 
     def init_world(self):
         print("init world")
@@ -112,10 +118,10 @@ class World(ShowBase):
 
         self.disableMouse()
 
-        #lens = OrthographicLens()
-        #lens.setFilmSize(20, 15)  # Or whatever is appropriate for your scene
+        lens = OrthographicLens()
+        lens.setFilmSize(16, 16)  # Or whatever is appropriate for your scene
 
-        #self.cam.node().setLens(lens)
+        self.cam.node().setLens(lens)
         self.cam.setPos(0, -20, 0)
         self.cam.lookAt(0, 0, 0)
 
