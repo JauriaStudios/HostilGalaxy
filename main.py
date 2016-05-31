@@ -7,8 +7,14 @@
 
 #import pdb
 
-import sys, os, time
+import pyglet
+
+import sys
+import os
+import time
+
 import json
+
 from pprint import pprint
 
 from math import pi, sin, cos
@@ -48,7 +54,9 @@ class World(ShowBase):
         ShowBase.__init__(self)
         print("init game")
 
-        self.ship_control_type = 0 #0 keyboard, 1 mouse, 2 joystick
+        #self.init_joystick()
+
+        self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
 
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
@@ -85,6 +93,21 @@ class World(ShowBase):
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
         self.taskMgr.add(self.collision.update, 'updateCollision')
+
+
+    def init_joystick(self):
+        print("init Joystick")
+
+        self.joysticks = pyglet.input.get_joysticks()
+        if self.joysticks:
+            for i in range(0,len(self.joysticks)):
+                print("-- Found joystick nº %s" % i)
+
+                self.joystick = self.joysticks[i]
+
+                self.joystick.open()
+        else:
+            print("-- No Joystick found")
 
     def init_world(self):
         print("init world")
@@ -139,6 +162,7 @@ def main():
 
     props.setTitle('Hostil Galaxy')
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
+    props.setCursorHidden(False)
     props.setFullscreen(False)
     props.setSize(800, 600)
 

@@ -23,6 +23,9 @@ class Ship:
         self.x_pos = 0
         self.z_pos = 0
 
+        self.x_speed = 0
+        self.z_speed = 0
+
         self.x_pid = PID(3.0, 5.0, 1.0)
         self.z_pid = PID(3.0, 5.0, 1.0)
 
@@ -89,13 +92,12 @@ class Ship:
 
         # Movement
 
+        if self.keyMap["brake"]:
+            self.speed = self.low_speed
+        else:
+            self.speed = self.normal_speed
 
         if self.game.ship_control_type == 0:
-            if self.keyMap["brake"]:
-                self.speed = self.low_speed
-            else:
-                self.speed = self.normal_speed
-
 
             if self.keyMap["up"]:
                 self.model.setZ(self.model, self.speed * dt)
@@ -120,17 +122,17 @@ class Ship:
             pid_x = self.x_pid.update(self.model.getX())
             pid_z = self.z_pid.update(self.model.getZ())
 
-            self.vx = pid_x
-            self.vz = pid_z
+            self.x_speed_ = pid_x
+            self.z_speed = pid_z
 
-            self.vx = min(10, self.vx)
-            self.vx = max(-10, self.vx)
+            self.x_speed_ = min(self.speed, self.x_speed_)
+            self.x_speed_ = max(-self.speed, self.x_speed_)
 
-            self.vz = min(10, self.vz)
-            self.vz = max(-10, self.vz)
+            self.z_speed = min(self.speed, self.z_speed)
+            self.z_speed = max(-self.speed, self.z_speed)
 
-            self.model.setX(self.model, self.vx * dt)
-            self.model.setZ(self.model, self.vz * dt)
+            self.model.setX(self.model, self.x_speed_ * dt)
+            self.model.setZ(self.model, self.z_speed * dt)
 
         # Shoot
 

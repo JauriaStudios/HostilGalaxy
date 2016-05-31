@@ -16,6 +16,10 @@ class Collision:
 
         self.cTrav = CollisionTraverser()
 
+        self.init_mouse()
+
+    def init_mouse(self):
+
         self.mouseGroundRay = CollisionRay()
         self.mouseGroundRay.setOrigin(0, 5, 0)
         self.mouseGroundRay.setDirection(0, -1, 0)
@@ -29,24 +33,24 @@ class Collision:
 
 
         # Uncomment this line to see the collision rays
-        self.mouseGroundColNp.show()
+        # self.mouseGroundColNp.show()
 
         # Uncomment this line to show a visual representation of the
         # collisions occuring
-        self.cTrav.showCollisions(render)
+        # self.cTrav.showCollisions(render)
 
     def update(self, task):
 
         if self.game.mouseWatcherNode.hasMouse():
 
-            mpos = self.game.mouseWatcherNode.getMouse()
+            mouse_pos = self.game.mouseWatcherNode.getMouse()
 
-            self.mouseGroundRay.setFromLens(self.game.camNode, mpos.getX(), mpos.getY())
+            self.mouseGroundRay.setFromLens(self.game.camNode, mouse_pos.getX(), mouse_pos.getY())
 
-            nearPoint = render.getRelativePoint(self.game.camera, self.mouseGroundRay.getOrigin())
-            nearVec = render.getRelativeVector(self.game.camera, self.mouseGroundRay.getDirection())
+            near_point = render.getRelativePoint(self.game.camera, self.mouseGroundRay.getOrigin())
+            near_vec = render.getRelativeVector(self.game.camera, self.mouseGroundRay.getDirection())
 
-            self.game.ship.shipPoint.setPos(PointAtY(self.game.ship.model.getY(), nearPoint, nearVec))
+            self.game.ship.shipPoint.setPos(PointAtY(self.game.ship.model.getY(), near_point, near_vec))
 
         return task.cont
 

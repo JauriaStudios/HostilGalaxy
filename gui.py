@@ -4,7 +4,8 @@
 
 # GUI
 
-import os, sys
+import os
+import sys
 
 from panda3d.core import AntialiasAttrib, TransparencyAttrib
 
