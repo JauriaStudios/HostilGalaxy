@@ -7,8 +7,6 @@
 
 #import pdb
 
-import pyglet
-
 import sys
 import os
 import time
@@ -40,6 +38,8 @@ from panda3d.core import PStatClient
 
 from panda3d.ai import *
 
+from joypad import Joypad
+
 from gui import StartMenu
 
 from collision import Collision
@@ -52,9 +52,9 @@ class World(ShowBase):
 
     def __init__(self):
         ShowBase.__init__(self)
-        print("init game")
+        print("- init game")
 
-        #self.init_joystick()
+        #self.joypad = Joypad()
 
         self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
 
@@ -74,14 +74,15 @@ class World(ShowBase):
         sys.exit(0)
 
     def cleanup(self):
-        print("clean up")
+        print("-- clean up")
+        self.joypad.clean()
 
     def do_reset(self):
         self.cleanup()
         self.setup()
 
     def setup(self):
-        print("start level")
+        print("-- start level")
 
         self.init_world()
         self.init_ship()
@@ -94,33 +95,18 @@ class World(ShowBase):
         self.taskMgr.add(self.ship.update, 'updateShip')
         self.taskMgr.add(self.collision.update, 'updateCollision')
 
-
-    def init_joystick(self):
-        print("init Joystick")
-
-        self.joysticks = pyglet.input.get_joysticks()
-        if self.joysticks:
-            for i in range(0,len(self.joysticks)):
-                print("-- Found joystick nº %s" % i)
-
-                self.joystick = self.joysticks[i]
-
-                self.joystick.open()
-        else:
-            print("-- No Joystick found")
-
     def init_world(self):
-        print("init world")
+        print("-- init world")
 
         self.bg.draw()
         self.rock.draw()
 
     def init_ship(self):
-        print("init ship")
+        print("-- init ship")
         self.ship.draw()
 
     def init_lights(self):
-        print("init lights")
+        print("-- init lights")
 
         # Light
         alight = AmbientLight('ambientLight')
@@ -137,7 +123,7 @@ class World(ShowBase):
         render.setLight(dlightNP)
 
     def init_camera(self):
-        print("init camera")
+        print("-- init camera")
 
         self.disableMouse()
 
