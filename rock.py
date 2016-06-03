@@ -27,7 +27,6 @@ class Rock:
 
         self.game.taskMgr.add(self.update, "update_rock")
 
-
     def update(self, task):
 
         dt = globalClock.getDt()

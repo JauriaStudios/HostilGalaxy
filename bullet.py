@@ -4,8 +4,8 @@
 
 # Bullet
 
-import os
 
+from collision import BulletCollision
 
 class Bullet:
 
@@ -18,15 +18,15 @@ class Bullet:
 
         # Creates a bullet and adds it to the bullet list
         pos = self.ship.model.getPos()
-        self.model = loader.loadModel(os.path.join("data", "bullet.egg"))
+        self.model = loader.loadModel("data/bullet.egg")
         self.model.setPos(pos)
         self.model.setScale(1)
-        # Velocity is in relation to the ship
-        vel = (10)
 
         self.ship.bullets.append(self.model)
 
         self.model.reparentTo(render)
+
+        self.collision = BulletCollision(self)
 
         self.ship.game.taskMgr.add(self.update, 'updateBullet')
 

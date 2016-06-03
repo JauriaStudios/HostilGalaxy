@@ -94,12 +94,12 @@ class World(ShowBase):
         self.init_lights()
         self.init_camera()
 
+        self.mouse_collision = MouseCollision(self)
+        self.ship_collision = ShipCollision(self)
 
         self.rock1 = Rock(self, 5, 5)
         self.rock2 = Rock(self, -5, 6)
-
-        self.mouse_collision = MouseCollision(self)
-        self.ship_collision = ShipCollision(self)
+        self.rock3 = Rock(self, -5, 3)
 
 
         #self.joypad = Joypad()

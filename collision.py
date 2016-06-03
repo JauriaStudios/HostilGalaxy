@@ -7,29 +7,32 @@
 
 from panda3d.core import CollisionNode, CollisionSphere, CollisionRay
 from panda3d.core import CollisionHandlerQueue, CollisionTraverser
-from panda3d.core import CollideMask
+from panda3d.core import CollideMask, BitMask32
+
+ENEMIES = BitMask32(0b01)
+ALLIES = BitMask32(0b10)
 
 class MouseCollision:
     def __init__(self, game):
 
         self.game = game
 
-        self.cTrav = CollisionTraverser()
+        self.c_trav = CollisionTraverser()
 
-        self.mouseGroundHandler = CollisionHandlerQueue()
-        self.mouseGroundRay = CollisionRay()
-        self.mouseGroundCol = CollisionNode('mouseRay')
+        self.mouse_groundHandler = CollisionHandlerQueue()
+        self.mouse_ground_ray = CollisionRay()
+        self.mouse_ground_col = CollisionNode('mouseRay')
 
-        self.mouseGroundRay.setOrigin(0, 0, 0)
-        self.mouseGroundRay.setDirection(0, -1, 0)
+        self.mouse_ground_ray.setOrigin(0, 0, 0)
+        self.mouse_ground_ray.setDirection(0, -1, 0)
 
-        self.mouseGroundCol.addSolid(self.mouseGroundRay)
-        self.mouseGroundCol.setFromCollideMask(CollideMask.bit(0))
-        self.mouseGroundCol.setIntoCollideMask(CollideMask.allOff())
+        self.mouse_ground_col.addSolid(self.mouse_ground_ray)
+        self.mouse_ground_col.setFromCollideMask(CollideMask.bit(0))
+        self.mouse_ground_col.setIntoCollideMask(CollideMask.allOff())
 
-        self.mouseGroundColNp = self.game.camera.attachNewNode(self.mouseGroundCol)
+        self.mouse_ground_col_np = self.game.camera.attachNewNode(self.mouse_ground_col)
 
-        self.cTrav.addCollider(self.mouseGroundColNp, self.mouseGroundHandler)
+        self.c_trav.addCollider(self.mouse_ground_col_np, self.mouse_groundHandler)
 
         self.game.taskMgr.add(self.update, 'updateMouse')
 
@@ -39,10 +42,10 @@ class MouseCollision:
 
             mouse_pos = self.game.mouseWatcherNode.getMouse()
 
-            self.mouseGroundRay.setFromLens(self.game.camNode, mouse_pos.getX(), mouse_pos.getY())
+            self.mouse_ground_ray.setFromLens(self.game.camNode, mouse_pos.getX(), mouse_pos.getY())
 
-            near_point = render.getRelativePoint(self.game.camera, self.mouseGroundRay.getOrigin())
-            near_vec = render.getRelativeVector(self.game.camera, self.mouseGroundRay.getDirection())
+            near_point = render.getRelativePoint(self.game.camera, self.mouse_ground_ray.getOrigin())
+            near_vec = render.getRelativeVector(self.game.camera, self.mouse_ground_ray.getDirection())
 
             self.game.ship.shipPoint.setPos(self.PointAtY(self.game.ship.model.getY(), near_point, near_vec))
 
@@ -55,14 +58,12 @@ class MouseCollision:
 class EntityCollision:
     def __init__(self, entity):
 
-        # Target; a sphere. You should attach it to your actual model,
-        # not .show() it directly. Also, the sphere you see is a low-
-        # poly model, but the collisions will be calculated against a
-        # mathematically perfect sphere.
         self.target = CollisionSphere(0, 0, 0, 1)
-        self.target_nodepath = entity.model.attach_new_node(CollisionNode('collision_target'))
+        self.target_node = CollisionNode('collision_entity')
+        self.target_node.setFromCollideMask(ALLIES)
+        self.target_nodepath = entity.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
-        #self.target_nodepath.show()
+        self.target_nodepath.show()
 
 
 class ShipCollision:
@@ -70,24 +71,56 @@ class ShipCollision:
 
         self.game = game
 
-        self.setup_collision() #  Now we have self.hitter_nodepath
+        self.setup_collision()
         self.queue = CollisionHandlerQueue()
         self.traverser = CollisionTraverser('Collision Traverser')
         self.traverser.showCollisions(render)
         self.traverser.add_collider(self.target_nodepath, self.queue)
-        self.game.taskMgr.add(self.collide, "Collision Task")
+
+        base.taskMgr.add(self.collide, "Collision Task")
 
     def setup_collision(self):
-        # Hitter. Do note that not every combination of object works,
-        # there is a table for that in the manual.
 
-        self.target = CollisionSphere(0, 0, 0, 1)
-        self.target_nodepath = self.game.ship.model.attach_new_node(CollisionNode('collision_target'))
+        self.target = CollisionSphere(0, 0, 0, 0.5)
+        self.target_node = CollisionNode('collision_ship')
+        self.target_node.setIntoCollideMask(CollideMask.allOff())
+
+        self.target_nodepath = self.game.ship.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
 
     def collide(self, task):
         self.traverser.traverse(render)
         for entry in self.queue.get_entries():
+            print("Ship:")
+            print(entry)
+        return task.cont
+
+
+class BulletCollision:
+    def __init__(self, bullet):
+
+        self.bullet = bullet
+
+        self.setup_collision()
+        self.queue = CollisionHandlerQueue()
+        self.traverser = CollisionTraverser('Collision Traverser')
+        self.traverser.showCollisions(render)
+        self.traverser.add_collider(self.target_nodepath, self.queue)
+        base.taskMgr.add(self.collide, "Collision Task")
+
+    def setup_collision(self):
+
+        self.target = CollisionSphere(0, 0, 0, 0.1)
+        self.target_node = CollisionNode('collision_bullet')
+        self.target_node.setIntoCollideMask(CollideMask.allOff())
+        self.target_nodepath = self.bullet.model.attach_new_node(self.target_node)
+        self.target_nodepath.node().addSolid(self.target)
+        self.target_nodepath.show()
+
+    def collide(self, task):
+        self.traverser.traverse(render)
+        for entry in self.queue.get_entries():
+            print("Bullet:")
             print(entry)
         return task.cont
