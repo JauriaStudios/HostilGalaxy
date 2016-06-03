@@ -42,7 +42,7 @@ from joypad import Joypad
 
 from gui import StartMenu
 
-from collision import MouseCollision, EntityCollision, ShipCollision
+from collision import MouseCollision, ShipCollision
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -88,15 +88,17 @@ class World(ShowBase):
 
         self.bg = Background(self)
         self.ship = Ship(self)
-        self.rock = Rock(self, 5)
 
         self.init_world()
         self.init_ship()
         self.init_lights()
         self.init_camera()
 
+
+        self.rock1 = Rock(self, 5, 5)
+        self.rock2 = Rock(self, -5, 6)
+
         self.mouse_collision = MouseCollision(self)
-        self.rock_collision = EntityCollision(self.rock)
         self.ship_collision = ShipCollision(self)
 
 
@@ -113,7 +115,6 @@ class World(ShowBase):
         print("-- init world")
 
         self.bg.draw()
-        self.rock.draw()
 
     def init_ship(self):
 
@@ -156,7 +157,6 @@ class World(ShowBase):
 
         dt = globalClock.getDt()
 
-        self.rock.model.setZ(self.rock.model.getZ() - dt*2)
 
         return task.cont
 

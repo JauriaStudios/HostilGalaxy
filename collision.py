@@ -9,7 +9,6 @@ from panda3d.core import CollisionNode, CollisionSphere, CollisionRay
 from panda3d.core import CollisionHandlerQueue, CollisionTraverser
 from panda3d.core import CollideMask
 
-
 class MouseCollision:
     def __init__(self, game):
 
