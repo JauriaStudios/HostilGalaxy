@@ -42,7 +42,7 @@ from joypad import Joypad
 
 from gui import StartMenu
 
-from collision import Collision
+from collision import MouseCollision, EntityCollision, ShipCollision
 from ship import Ship
 from bg import Background
 from rock import Rock
@@ -61,11 +61,6 @@ class World(ShowBase):
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
 
-        self.bg = Background(self)
-        self.ship = Ship(self)
-        self.rock = Rock(5)
-
-        self.collision = Collision(self)
 
         self.start_menu = StartMenu(self)
 
@@ -91,10 +86,18 @@ class World(ShowBase):
 
         print("-- start level")
 
+        self.bg = Background(self)
+        self.ship = Ship(self)
+        self.rock = Rock(self, 5)
+
         self.init_world()
         self.init_ship()
         self.init_lights()
         self.init_camera()
+
+        self.mouse_collision = MouseCollision(self)
+        self.rock_collision = EntityCollision(self.rock)
+        self.ship_collision = ShipCollision(self)
 
 
         #self.joypad = Joypad()
@@ -103,7 +106,7 @@ class World(ShowBase):
         self.taskMgr.add(self.update, 'update')
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
-        self.taskMgr.add(self.collision.update, 'updateCollision')
+        #self.taskMgr.add(self.joypad.update, 'updateJoypad')
 
     def init_world(self):
 
@@ -148,7 +151,6 @@ class World(ShowBase):
         self.cam.node().setLens(lens)
         self.cam.setPos(0, -20, 0)
         self.cam.lookAt(0, 0, 0)
-
 
     def update(self, task):
 
