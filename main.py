@@ -56,8 +56,6 @@ class World(ShowBase):
 
         print("- init game")
 
-        #self.joypad = Joypad()
-
         self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
 
         self.accept('escape', self.do_exit)
@@ -73,16 +71,17 @@ class World(ShowBase):
 
     def do_exit(self):
 
+        self.cleanup()
+
         print("- end game")
 
-        self.cleanup()
         sys.exit(0)
 
     def cleanup(self):
 
         print("-- clean up")
 
-        self.joypad.clean()
+        #self.joypad.clean()
 
     def do_reset(self):
         self.cleanup()
@@ -97,12 +96,14 @@ class World(ShowBase):
         self.init_lights()
         self.init_camera()
 
+
+        #self.joypad = Joypad()
+
         # Tasks
         self.taskMgr.add(self.update, 'update')
         self.taskMgr.add(self.bg.update, 'updateBackground')
         self.taskMgr.add(self.ship.update, 'updateShip')
         self.taskMgr.add(self.collision.update, 'updateCollision')
-        #self.taskMgr.add(self.joypad.update, 'updateJoypad')
 
     def init_world(self):
 
@@ -142,7 +143,7 @@ class World(ShowBase):
         self.disableMouse()
 
         lens = OrthographicLens()
-        lens.setFilmSize(16, 16)  # Or whatever is appropriate for your scene
+        lens.setFilmSize(20, 15)  # Or whatever is appropriate for your scene
 
         self.cam.node().setLens(lens)
         self.cam.setPos(0, -20, 0)
