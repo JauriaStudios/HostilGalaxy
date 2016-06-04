@@ -58,10 +58,10 @@ class MouseCollision:
 
 class EntityCollision:
     def __init__(self, entity):
-
         self.target = CollisionSphere(0, 0, 0, 1)
         self.target_node = CollisionNode('collision_entity')
-        self.target_node.setFromCollideMask(ALLIES)
+        self.target_node.setFromCollideMask(0)  # unused
+        self.target_node.setIntoCollideMask(ENEMIES)
         self.target_nodepath = entity.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
@@ -69,23 +69,19 @@ class EntityCollision:
 
 class ShipCollision:
     def __init__(self, game):
-
         self.game = game
-
         self.setup_collision()
         self.queue = CollisionHandlerQueue()
         self.traverser = CollisionTraverser('Collision Traverser')
         self.traverser.showCollisions(render)
         self.traverser.add_collider(self.target_nodepath, self.queue)
-
         base.taskMgr.add(self.collide, "Collision Task")
 
     def setup_collision(self):
-
         self.target = CollisionSphere(0, 0, 0, 0.5)
         self.target_node = CollisionNode('collision_ship')
-        self.target_node.setIntoCollideMask(ENEMIES)
-        self.target_node.setFromCollideMask(0)
+        self.target_node.setFromCollideMask(ENEMIES)
+        self.target_node.setIntoCollideMask(ALLIES)
         self.target_nodepath = self.game.ship.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
@@ -114,8 +110,8 @@ class BulletCollision:
 
         self.target = CollisionSphere(0, 0, 0, 0.1)
         self.target_node = CollisionNode('collision_bullet')
-        self.target_node.setIntoCollideMask(0)
         self.target_node.setFromCollideMask(ENEMIES)
+        self.target_node.setIntoCollideMask(0)
 
         self.target_nodepath = self.bullet.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
