@@ -9,8 +9,9 @@ from panda3d.core import CollisionNode, CollisionSphere, CollisionRay
 from panda3d.core import CollisionHandlerQueue, CollisionTraverser
 from panda3d.core import CollideMask, BitMask32
 
-ENEMIES = BitMask32(0b01)
+ENEMIES = BitMask32(0b1)
 ALLIES = BitMask32(0b10)
+
 
 class MouseCollision:
     def __init__(self, game):
@@ -83,8 +84,8 @@ class ShipCollision:
 
         self.target = CollisionSphere(0, 0, 0, 0.5)
         self.target_node = CollisionNode('collision_ship')
-        self.target_node.setIntoCollideMask(CollideMask.allOff())
-
+        self.target_node.setIntoCollideMask(ENEMIES)
+        self.target_node.setFromCollideMask(0)
         self.target_nodepath = self.game.ship.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
@@ -113,7 +114,9 @@ class BulletCollision:
 
         self.target = CollisionSphere(0, 0, 0, 0.1)
         self.target_node = CollisionNode('collision_bullet')
-        self.target_node.setIntoCollideMask(CollideMask.allOff())
+        self.target_node.setIntoCollideMask(0)
+        self.target_node.setFromCollideMask(ENEMIES)
+
         self.target_nodepath = self.bullet.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
