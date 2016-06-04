@@ -33,11 +33,13 @@ class Bullet:
     def update(self, task):
         dt = globalClock.getDt()
 
-        self.life -= 1
+        if self.model:
 
-        if self.life <= 0:
-            self.model.removeNode()
-        else:
-            self.model.setZ(self.model, self.speed * dt)
+            self.life -= 1
+
+            if self.life <= 0:
+                self.model.removeNode()
+            else:
+                self.model.setZ(self.model, self.speed * dt)
 
         return task.cont

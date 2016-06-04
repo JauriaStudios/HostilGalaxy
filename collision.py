@@ -40,15 +40,16 @@ class MouseCollision:
     def update(self, task):
 
         if self.game.mouseWatcherNode.hasMouse():
+            if self.game.ship.model:
 
-            mouse_pos = self.game.mouseWatcherNode.getMouse()
+                mouse_pos = self.game.mouseWatcherNode.getMouse()
 
-            self.mouse_ground_ray.setFromLens(self.game.camNode, mouse_pos.getX(), mouse_pos.getY())
+                self.mouse_ground_ray.setFromLens(self.game.camNode, mouse_pos.getX(), mouse_pos.getY())
 
-            near_point = render.getRelativePoint(self.game.camera, self.mouse_ground_ray.getOrigin())
-            near_vec = render.getRelativeVector(self.game.camera, self.mouse_ground_ray.getDirection())
+                near_point = render.getRelativePoint(self.game.camera, self.mouse_ground_ray.getOrigin())
+                near_vec = render.getRelativeVector(self.game.camera, self.mouse_ground_ray.getDirection())
 
-            self.game.ship.shipPoint.setPos(self.PointAtY(self.game.ship.model.getY(), near_point, near_vec))
+                self.game.ship.shipPoint.setPos(self.PointAtY(self.game.ship.model.getY(), near_point, near_vec))
 
         return task.cont
 
@@ -58,18 +59,9 @@ class MouseCollision:
 
 class EntityCollision:
     def __init__(self, entity):
-        self.target = CollisionSphere(0, 0, 0, 1)
-        self.target_node = CollisionNode('collision_entity')
-        self.target_node.setFromCollideMask(0)  # unused
-        self.target_node.setIntoCollideMask(ENEMIES)
-        self.target_nodepath = entity.model.attach_new_node(self.target_node)
-        self.target_nodepath.node().addSolid(self.target)
-        self.target_nodepath.show()
 
+        self.entity = entity
 
-class ShipCollision:
-    def __init__(self, game):
-        self.game = game
         self.setup_collision()
         self.queue = CollisionHandlerQueue()
         self.traverser = CollisionTraverser('Collision Traverser')
@@ -78,19 +70,57 @@ class ShipCollision:
         base.taskMgr.add(self.collide, "Collision Task")
 
     def setup_collision(self):
-        self.target = CollisionSphere(0, 0, 0, 0.5)
-        self.target_node = CollisionNode('collision_ship')
-        self.target_node.setFromCollideMask(ENEMIES)
-        self.target_node.setIntoCollideMask(ALLIES)
-        self.target_nodepath = self.game.ship.model.attach_new_node(self.target_node)
+        self.target = CollisionSphere(0, 0, 0, 1)
+        self.target_node = CollisionNode('collision_entity')
+        self.target_node.setFromCollideMask(ALLIES)  # unused
+        self.target_node.setIntoCollideMask(ENEMIES)
+        self.target_nodepath = self.entity.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
 
     def collide(self, task):
+
         self.traverser.traverse(render)
+
         for entry in self.queue.get_entries():
-            print("Ship:")
+            print("Entity:")
             print(entry)
+            self.entity.spawn_particles(1)
+
+        return task.cont
+
+
+class ShipCollision:
+    def __init__(self, ship):
+
+        self.ship = ship
+
+        self.setup_collision()
+        self.queue = CollisionHandlerQueue()
+        self.traverser = CollisionTraverser('Collision Traverser')
+        self.traverser.showCollisions(render)
+        self.traverser.add_collider(self.target_nodepath, self.queue)
+        base.taskMgr.add(self.collide, "Collision Task")
+
+    def setup_collision(self):
+
+        self.target = CollisionSphere(0, 0, 0, 0.5)
+        self.target_node = CollisionNode('collision_ship')
+        self.target_node.setFromCollideMask(ENEMIES)
+        self.target_node.setIntoCollideMask(ALLIES)
+        self.target_nodepath = self.ship.model.attach_new_node(self.target_node)
+        self.target_nodepath.node().addSolid(self.target)
+        #self.target_nodepath.show()
+
+    def collide(self, task):
+
+        self.traverser.traverse(render)
+
+        for entry in self.queue.get_entries():
+            #print("Ship:")
+            #print(entry)
+            self.ship.model.removeNode()
+
         return task.cont
 
 
@@ -111,15 +141,20 @@ class BulletCollision:
         self.target = CollisionSphere(0, 0, 0, 0.1)
         self.target_node = CollisionNode('collision_bullet')
         self.target_node.setFromCollideMask(ENEMIES)
-        self.target_node.setIntoCollideMask(0)
+        self.target_node.setIntoCollideMask(ALLIES)
 
         self.target_nodepath = self.bullet.model.attach_new_node(self.target_node)
         self.target_nodepath.node().addSolid(self.target)
         self.target_nodepath.show()
 
     def collide(self, task):
+        
         self.traverser.traverse(render)
+
         for entry in self.queue.get_entries():
-            print("Bullet:")
-            print(entry)
+
+            #print("Bullet:")
+            #print(entry)
+            self.bullet.model.removeNode()
+
         return task.cont

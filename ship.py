@@ -11,6 +11,16 @@ from direct.actor.Actor import Actor
 
 from panda3d.core import PandaNode, NodePath
 
+from panda3d.core import Filename
+
+from panda3d.physics import BaseParticleEmitter, BaseParticleRenderer
+from panda3d.physics import PointParticleFactory, SpriteParticleRenderer
+from panda3d.physics import LinearNoiseForce, DiscEmitter
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
+from direct.particles.ForceGroup import ForceGroup
+
+
 class Ship:
 
     def __init__(self, game):
@@ -87,61 +97,73 @@ class Ship:
     def draw(self):
         self.model.reparentTo(render)
 
+        self.p = ParticleEffect()
+        self.p.loadConfig(Filename('data/particles/fireish.ptf'))
+
+        self.p.setR(180)
+        self.p.setScale(0.25)
+        # Sets particles to birth relative to the teapot, but to render at
+        # toplevel
+        self.p.start(self.model)
+        self.p.setPos(0.000, 0.000, 0.000)
+
     def update(self, task):
         dt = globalClock.getDt()
 
-        # Movement
+        if self.model:
 
-        if self.keyMap["brake"]:
-            self.speed = self.low_speed
-        else:
-            self.speed = self.normal_speed
+            # Movement
 
-        if self.game.ship_control_type == 0:
+            if self.keyMap["brake"]:
+                self.speed = self.low_speed
+            else:
+                self.speed = self.normal_speed
 
-            if self.keyMap["up"]:
-                self.model.setZ(self.model, self.speed * dt)
+            if self.game.ship_control_type == 0:
 
-            elif self.keyMap["down"]:
-                self.model.setZ(self.model, -self.speed * dt)
+                if self.keyMap["up"]:
+                    self.model.setZ(self.model, self.speed * dt)
 
-            if self.keyMap["left"]:
-                self.model.setX(self.model, -self.speed * dt)
+                elif self.keyMap["down"]:
+                    self.model.setZ(self.model, -self.speed * dt)
 
-            elif self.keyMap["right"]:
-                self.model.setX(self.model, self.speed * dt)
+                if self.keyMap["left"]:
+                    self.model.setX(self.model, -self.speed * dt)
 
-        elif self.game.ship_control_type == 1:
+                elif self.keyMap["right"]:
+                    self.model.setX(self.model, self.speed * dt)
 
-            self.x_pos = self.shipPoint.getX()
-            self.z_pos = self.shipPoint.getZ()
+            elif self.game.ship_control_type == 1:
 
-            self.x_pid.setPoint(self.x_pos)
-            self.z_pid.setPoint(self.z_pos)
+                self.x_pos = self.shipPoint.getX()
+                self.z_pos = self.shipPoint.getZ()
 
-            pid_x = self.x_pid.update(self.model.getX())
-            pid_z = self.z_pid.update(self.model.getZ())
+                self.x_pid.setPoint(self.x_pos)
+                self.z_pid.setPoint(self.z_pos)
 
-            self.x_speed_ = pid_x
-            self.z_speed = pid_z
+                pid_x = self.x_pid.update(self.model.getX())
+                pid_z = self.z_pid.update(self.model.getZ())
 
-            self.x_speed_ = min(self.speed, self.x_speed_)
-            self.x_speed_ = max(-self.speed, self.x_speed_)
+                self.x_speed_ = pid_x
+                self.z_speed = pid_z
 
-            self.z_speed = min(self.speed, self.z_speed)
-            self.z_speed = max(-self.speed, self.z_speed)
+                self.x_speed_ = min(self.speed, self.x_speed_)
+                self.x_speed_ = max(-self.speed, self.x_speed_)
 
-            self.model.setX(self.model, self.x_speed_ * dt)
-            self.model.setZ(self.model, self.z_speed * dt)
+                self.z_speed = min(self.speed, self.z_speed)
+                self.z_speed = max(-self.speed, self.z_speed)
 
-        # Shoot
+                self.model.setX(self.model, self.x_speed_ * dt)
+                self.model.setZ(self.model, self.z_speed * dt)
 
-        if self.keyMap["attack"]:
-            current_shoot_time = task.time
-            if current_shoot_time - self.last_shoot >= self.cool_down:
+            # Shoot
 
-                self.last_shoot = current_shoot_time
+            if self.keyMap["attack"]:
+                current_shoot_time = task.time
+                if current_shoot_time - self.last_shoot >= self.cool_down:
 
-                self.bullet = Bullet(self)
+                    self.last_shoot = current_shoot_time
+
+                    self.bullet = Bullet(self)
 
         return task.cont

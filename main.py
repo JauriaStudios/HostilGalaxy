@@ -36,6 +36,13 @@ from panda3d.core import TransformState
 from panda3d.core import WindowProperties
 from panda3d.core import PStatClient
 
+from panda3d.physics import BaseParticleEmitter, BaseParticleRenderer
+from panda3d.physics import PointParticleFactory, SpriteParticleRenderer
+from panda3d.physics import LinearNoiseForce, DiscEmitter
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
+from direct.particles.ForceGroup import ForceGroup
+
 from panda3d.ai import *
 
 from joypad import Joypad
@@ -86,41 +93,48 @@ class World(ShowBase):
 
         print("-- start level")
 
-        self.bg = Background(self)
-        self.ship = Ship(self)
 
+
+        self.init_particles()
         self.init_world()
         self.init_ship()
         self.init_lights()
         self.init_camera()
 
         self.mouse_collision = MouseCollision(self)
-        self.ship_collision = ShipCollision(self)
-
-        self.rock1 = Rock(self, 5, 5)
-        self.rock2 = Rock(self, -5, 6)
-        self.rock3 = Rock(self, -5, 3)
-
 
         #self.joypad = Joypad()
 
         # Tasks
         self.taskMgr.add(self.update, 'update')
-        self.taskMgr.add(self.bg.update, 'updateBackground')
-        self.taskMgr.add(self.ship.update, 'updateShip')
         #self.taskMgr.add(self.joypad.update, 'updateJoypad')
 
     def init_world(self):
 
         print("-- init world")
 
+        self.bg = Background(self)
         self.bg.draw()
+
+        self.rock1 = Rock(self, 5, 5)
+        self.rock2 = Rock(self, -5, 6)
+        self.rock3 = Rock(self, -5, 3)
+
+        self.taskMgr.add(self.bg.update, 'updateBackground')
 
     def init_ship(self):
 
         print("-- init ship")
 
+        self.ship = Ship(self)
+        self.ship_collision = ShipCollision(self.ship)
+
         self.ship.draw()
+        self.taskMgr.add(self.ship.update, 'updateShip')
+
+    def init_particles(self):
+
+        base.enableParticles()
 
     def init_lights(self):
 
