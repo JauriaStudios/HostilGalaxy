@@ -86,6 +86,7 @@ class EntityCollision:
             print("Entity:")
             print(entry)
             self.entity.spawn_particles(1)
+            self.entity.life -= 1
 
         return task.cont
 
@@ -119,6 +120,7 @@ class ShipCollision:
         for entry in self.queue.get_entries():
             #print("Ship:")
             #print(entry)
+            self.ship.model.cleanup()
             self.ship.model.removeNode()
 
         return task.cont
@@ -148,7 +150,7 @@ class BulletCollision:
         self.target_nodepath.show()
 
     def collide(self, task):
-        
+
         self.traverser.traverse(render)
 
         for entry in self.queue.get_entries():

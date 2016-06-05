@@ -28,6 +28,8 @@ class Rock:
         self.model.setPos(start_posX, 0, start_posY)
         self.model.setScale(1)
 
+        self.life = 5
+
         self.p_pos = 0
         self.p_life = 0
 
@@ -54,14 +56,20 @@ class Rock:
 
         dt = globalClock.getDt()
 
-        if self.p_life:
+        if self.model:
 
-            self.p_life -= 1
+            if self.p_life:
 
-            if self.p_life <= 0:
-                self.p.cleanup()
+                self.p_life -= 1
 
-        self.model.setR(self.model, 10 * dt)
-        #self.model.setZ(self.model.getZ() - dt*2)
+                if self.p_life <= 0:
+                    self.p.cleanup()
+
+
+            self.model.setR(self.model, 10 * dt)
+            self.model.setZ(self.model.getZ() - dt*2)
+
+            if self.life <= 0:
+                self.model.remove_node()
 
         return task.cont
