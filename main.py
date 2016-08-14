@@ -63,11 +63,10 @@ class World(ShowBase):
 
         print("- init game")
 
-        self.ship_control_type = 1 #0 keyboard, 1 mouse, 2 joystick
+        self.ship_control_type = 1 # 0 keyboard, 1 mouse, 2 joystick
 
         self.accept('escape', self.do_exit)
         self.accept('r', self.do_reset)
-
 
         self.start_menu = StartMenu(self)
 
