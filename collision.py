@@ -83,9 +83,11 @@ class EntityCollision:
         self.traverser.traverse(render)
 
         for entry in self.queue.get_entries():
-            print("Entity:")
-            print(entry)
-            self.entity.spawn_particles(1)
+            # print("Entity:")
+            pos = entry.getSurfacePoint(self.entity.model)
+            pos_x = pos[0]
+            pos_z = pos[2]
+            self.entity.spawn_particles(pos_x, pos_z)
             self.entity.life -= 1
 
         return task.cont
