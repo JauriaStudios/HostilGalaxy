@@ -144,17 +144,19 @@ class Ship:
                 pid_x = self.x_pid.update(self.model.getX())
                 pid_z = self.z_pid.update(self.model.getZ())
 
-                self.x_speed_ = pid_x
+                self.x_speed = pid_x
                 self.z_speed = pid_z
 
-                self.x_speed_ = min(self.speed, self.x_speed_)
-                self.x_speed_ = max(-self.speed, self.x_speed_)
+                self.x_speed = min(self.speed, self.x_speed)
+                self.x_speed = max(-self.speed, self.x_speed)
 
                 self.z_speed = min(self.speed, self.z_speed)
                 self.z_speed = max(-self.speed, self.z_speed)
 
-                self.model.setX(self.model, self.x_speed_ * dt)
+                self.model.setX(self.model, self.x_speed * dt)
                 self.model.setZ(self.model, self.z_speed * dt)
+
+            self.model.setR(self.x_speed)
 
             # Shoot
 
