@@ -182,7 +182,7 @@ def main():
     props.setCursorFilename(Filename.binaryFilename('cursor.ico'))
     props.setCursorHidden(False)
     props.setFullscreen(False)
-    props.setSize(800, 600)
+    props.setSize(1024, 768)
 
     game = World()
 
